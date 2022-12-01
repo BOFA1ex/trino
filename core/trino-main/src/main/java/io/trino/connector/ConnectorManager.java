@@ -163,6 +163,17 @@ public class ConnectorManager
         connectors.clear();
     }
 
+    public synchronized void dropConnection(String catalogName)
+    {
+        requireNonNull(catalogName, "catalogName is null");
+
+        catalogManager.removeCatalog(catalogName).ifPresent(catalog -> {
+            removeConnectorInternal(catalog);
+            removeConnectorInternal(createInformationSchemaCatalogName(catalog));
+            removeConnectorInternal(createSystemTablesCatalogName(catalog));
+        });
+    }
+
     public synchronized void addConnectorFactory(ConnectorFactory connectorFactory, Function<CatalogName, ClassLoader> duplicatePluginClassLoaderFactory)
     {
         requireNonNull(connectorFactory, "connectorFactory is null");

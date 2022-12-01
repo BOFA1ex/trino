@@ -65,8 +65,11 @@ import io.trino.memory.MemoryResource;
 import io.trino.memory.NodeMemoryConfig;
 import io.trino.metadata.BlockEncodingManager;
 import io.trino.metadata.CatalogManager;
+import io.trino.metadata.CatalogResource;
 import io.trino.metadata.DisabledSystemSecurityMetadata;
 import io.trino.metadata.DiscoveryNodeManager;
+import io.trino.metadata.DynamicCatalogConfig;
+import io.trino.metadata.DynamicCatalogStore;
 import io.trino.metadata.ForNodeManager;
 import io.trino.metadata.FunctionBundle;
 import io.trino.metadata.FunctionManager;
@@ -353,6 +356,12 @@ public class ServerMainModule
         binder.bind(PageSinkProvider.class).to(PageSinkManager.class).in(Scopes.SINGLETON);
 
         // metadata
+        DynamicCatalogConfig dynamicCatalogConfig = buildConfigObject(DynamicCatalogConfig.class);
+        if (dynamicCatalogConfig.isEnabled()) {
+            binder.bind(DynamicCatalogStore.class).in(Scopes.SINGLETON);
+            jaxrsBinder(binder).bind(CatalogResource.class);
+        }
+
         binder.bind(StaticCatalogStore.class).in(Scopes.SINGLETON);
         configBinder(binder).bindConfig(StaticCatalogStoreConfig.class);
         binder.bind(MetadataManager.class).in(Scopes.SINGLETON);
