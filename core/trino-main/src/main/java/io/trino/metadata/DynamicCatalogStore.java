@@ -200,7 +200,7 @@ public class DynamicCatalogStore
             properties.store(os, null);
         }
         catch (IOException e) {
-            log.error("Dump catalog properties error", e);
+            log.error("Dump catalog properties error.");
             throw new RuntimeException(e);
         }
     }
